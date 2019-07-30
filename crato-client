@@ -1,5 +1,15 @@
 #! /bin/bash
 
+cratohelp() {
+  cat <<MESSAGE
+Crato options:
+  crato-client [-c | --configure]
+  crato-client [-s | --suspend]
+  crato-client [-r | --remove]
+  crato-client [-h | --help]
+MESSAGE
+}
+
 # PARSE ARGV
 if [ -z $1 ]; then
   echo "Crato requires an option flag."
@@ -18,8 +28,9 @@ case $1 in
     echo "Remove Crato";;
     # call remove function
   -h | --help)      # usage & syntax examples
-    echo "TBA: help with usage and examples";;
-    # call help function
+    cratohelp
+    exit
+    ;;
   *)
     echo "Unrecognized argument. Run 'crato-client -h' for more information."
 esac
