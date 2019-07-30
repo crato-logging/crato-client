@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Enter values in double quotes as seen below. on the right side
+# If any values don't apply, replace sample value with double quotes,
+# as seen in LAN_IP and LAN_IP_PORT
+
+
+# SOURCES: which logs do you want Crato to capture?
+
+# source 1
+readonly LOG_1_PATH="/home/app/log/myapp.log"
+readonly LOG_1_TAG="app-message:"
+readonly LOG_1_SEVERITY="info"
+
+# source 2
+readonly LOG_2_PATH="/tmp/nginx.access.log"
+readonly LOG_2_TAG="nginx-access"
+readonly LOG_2_SEVERITY="info"
+
+# DESTINATIONS: how should this client deliver the logs to Crato's central server
+readonly PUBLIC_IP="123.12.32.12"
+readonly PUBLIC_IP_PORT="10514"
+readonly LAN_IP=""
+readonly LAN_IP_PORT=""

@@ -1,6 +1,19 @@
 #! /bin/bash
 
-cratohelp() {
+
+configure() {
+  source crato-config
+
+  # present and confirm values as entered
+  echo $LOG_1_PATH
+  echo $PUBLIC_IP_PORT
+
+  if [ $LAN_IP_PORT -z ]; then
+    echo "missing port number"
+  fi
+}
+
+crato_help() {
   cat <<MESSAGE
 Missing or unrecognized option. Crato requires a valid option flag.
 
@@ -14,22 +27,25 @@ MESSAGE
 
 # PARSE ARGV
 if [ -z $1 ]; then
-  cratohelp
+  crato_help
   exit
 fi
 
 case $1 in 
-  -c | --config)    # configures or reconfigures crato
-    echo "Configure Crato";;
-    # configurecrato
+  -c | --configure)    # configures or reconfigures crato
+    echo "Now configuring Crato..."
+     configure
+     ;;
   -s | --suspend)   # suspends crato's activities without deleting configs
-    echo "Suspend Crato's logging";;
+    echo "Suspend Crato's logging"
     # suspendcrato
+    ;;
   -r | --remove)    # removes crato configs; option to remove crato
-    echo "Remove Crato";;
+    echo "Remove Crato"
     # removecrato
+    ;;
   *)
-    cratohelp
+    crato_help
     exit
     ;;
 esac
