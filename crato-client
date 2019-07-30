@@ -1,0 +1,84 @@
+#! /bin/bash
+
+# PARSE ARGV
+if [ -z $1 ]; then
+  echo "Crato requires an option flag."
+  echo "Run 'crato-client -h' for more information."
+  exit 1
+fi
+
+case $1 in 
+  -c | --config)    # configures or reconfigures crato
+    echo "Configure Crato";;
+    # call config function
+  -s | --suspend)   # suspends crato's activities without deleting configs
+    echo "Suspend Crato's logging";;
+    # call suspend function
+  -r | --remove)    # removes crato configs; option to remove crato
+    echo "Remove Crato";;
+    # call remove function
+  -h | --help)      # usage & syntax examples
+    echo "TBA: help with usage and examples";;
+    # call help function
+  *)
+    echo "Unrecognized argument. Run 'crato-client -h' for more information."
+esac
+
+
+
+# CONFIRM SYSTEM & USER PREREQS:
+
+#  compatibility of target system:
+#     os & version of linux
+#     viable rsyslog installed & running as service
+
+#  user permissions:
+#     user running root
+
+
+# IF -c | --config
+
+#     COLLECT / SET CONFIG VARIABLES
+
+
+#     PREP FOR CONFIGURATION: IDENTIFY AND BACKUP EXISTING CONFIGS:
+
+#           if first install
+#            ensure appropriate directorys and a default rsyslog.conf file exist
+#          else
+#            cp rsyslog.d/49-crato.conf rsyslog.d/49-crato.conf.prev.timestamp
+
+
+
+#     CONFIGURE CRATO
+
+#         read in / gather config values
+#         generate rsyslog.d/49-crato.conf file based on variables
+
+
+# ELIF  -s | --suspend
+
+#     STOP CRATO LOGGING
+#       mv rsyslog.d/49-crato.conf rsyslog.d/49-crato.conf.prev.timestamp 
+
+# ELIF -r | --remove
+
+
+#     REMOVE CRATO
+#     if stop logging and remove all of Crato
+#       rm rsyslog.d/49-crato.conf
+#       cd and remove Crato scripts
+#     else 
+#       rm rsyslog.d/49-crato.conf
+
+# ELIF -h | --help
+
+
+
+# RESTART RSYSLOG
+
+#   confirm config validity
+
+
+# restart rsyslog
+
