@@ -2,7 +2,13 @@
 
 
 configure() {
-  source crato-config
+  if [ -f crato-config ]; then
+    source crato-config
+  else
+    echo "Unable to locate configuration file."
+    echo "Please confirm your configurations are in 'crato-config'."
+    exit
+  fi
 
   # present and confirm values as entered
   echo $LOG_1_PATH
