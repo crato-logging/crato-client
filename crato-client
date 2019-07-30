@@ -2,7 +2,9 @@
 
 cratohelp() {
   cat <<MESSAGE
-Crato options:
+Missing or unrecognized option. Crato requires a valid option flag.
+
+Valid options:
   crato-client [-c | --configure]
   crato-client [-s | --suspend]
   crato-client [-r | --remove]
@@ -12,27 +14,24 @@ MESSAGE
 
 # PARSE ARGV
 if [ -z $1 ]; then
-  echo "Crato requires an option flag."
-  echo "Run 'crato-client -h' for more information."
-  exit 1
+  cratohelp
+  exit
 fi
 
 case $1 in 
   -c | --config)    # configures or reconfigures crato
     echo "Configure Crato";;
-    # call config function
+    # configurecrato
   -s | --suspend)   # suspends crato's activities without deleting configs
     echo "Suspend Crato's logging";;
-    # call suspend function
+    # suspendcrato
   -r | --remove)    # removes crato configs; option to remove crato
     echo "Remove Crato";;
-    # call remove function
-  -h | --help)      # usage & syntax examples
+    # removecrato
+  *)
     cratohelp
     exit
     ;;
-  *)
-    echo "Unrecognized argument. Run 'crato-client -h' for more information."
 esac
 
 
