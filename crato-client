@@ -1,7 +1,9 @@
 #! /bin/bash
 
+readonly CRATO_RSYSLOG_CONF_FILE="/etc/rsyslog.d/49-crato.conf"
 
 configure() {
+
   if [ -f crato-config ]; then
     source crato-config
   else
@@ -10,45 +12,75 @@ configure() {
     exit
   fi
 
-  # present and confirm values as entered
-  echo $LOG_1_PATH
-  echo $PUBLIC_IP_PORT
+  # TODO: check for missing values; prompt for each; type <enter> to continue or <ctl - c> to reconfigure
 
-  if [ $LAN_IP_PORT -z ]; then
+  if [ -z $LAN_IP_PORT ]; then
     echo "missing port number"
   fi
+
+  # TODO: dynamically generate imfile blocks based on number of sources
+  #       change data structure to do this?
+
+  cat > "${CRATO_RSYSLOG_CONF_FILE}" << CONF
+# CRATO CLIENT CONFIGURATION
+# use in conjuction with default rsyslog.conf and rsyslog.d/50-default.conf files
+
+module(load="imfile")
+input(type="imfile" File="${LOG_1_PATH}"
+     Tag="${LOG_1_TAG}"
+     Severity="${LOG_1_SEVERITY}"
+     PersistStateInterval="20"
+     Facility="local0")
+
+input(type="imfile" File="${LOG_2_PATH}"
+     Tag="${LOG_2_TAG}"
+     Severity="${LOG_2_SEVERITY}"
+     PersistStateInterval="20"
+     Facility="local0")
+
+*.* action(type="omfwd" target="${PUBLIC_IP}" port="${PUBLIC_IP_PORT}" protocol="tcp"
+	   action.resumeRetryCount="100"
+queue.type="linkedList" queue.size="10000")
+
+CONF
+}
+
+suspend_logging() {
+
 }
 
 crato_help() {
-  cat <<MESSAGE
-Missing or unrecognized option. Crato requires a valid option flag.
+  cat << MSG
+
+Missing or unrecognized option. Crato requires a valid option flag,
+and most commands require 'sudo' privileges.
 
 Valid options:
-  crato-client [-c | --configure]
-  crato-client [-s | --suspend]
-  crato-client [-r | --remove]
-  crato-client [-h | --help]
-MESSAGE
+  sudo crato-client [-c | --configure]
+  sudo crato-client [-s | --suspend]
+  sudo crato-client [-r | --remove]
+       crato-client [-h | --help]
+
+MSG
 }
 
-# PARSE ARGV
 if [ -z $1 ]; then
   crato_help
   exit
 fi
 
 case $1 in 
-  -c | --configure)    # configures or reconfigures crato
-    echo "Now configuring Crato..."
+  -c | --configure)
+    echo "Configuring Crato ..."
      configure
      ;;
   -s | --suspend)   # suspends crato's activities without deleting configs
-    echo "Suspend Crato's logging"
-    # suspendcrato
+    echo "Suspending Crato's logging operations ..."
+    suspend_logging
     ;;
   -r | --remove)    # removes crato configs; option to remove crato
-    echo "Remove Crato"
-    # removecrato
+    echo "Removing Crato ..."
+    # remove
     ;;
   *)
     crato_help
