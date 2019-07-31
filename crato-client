@@ -1,9 +1,9 @@
 #! /bin/bash
 
-readonly CRATO_RSYSLOG_CONF_FILE="/etc/rsyslog.d/49-crato.conf"
+readonly RSYSLOG_CONF_DIR="/etc/rsyslog.d"
+readonly CRATO_RSYSLOG_CONF_FILE="${RSYSLOG_CONF_DIR}/49-crato.conf"
 
 configure() {
-
   if [ -f crato-config ]; then
     source crato-config
   else
@@ -46,7 +46,37 @@ CONF
 }
 
 suspend_logging() {
+  local conf="${CRATO_RSYSLOG_CONF_FILE}"
 
+  if [ -f "$conf" ]; then
+    mv "${conf}" "${conf}.suspended"
+    restart_rsyslog
+    echo "Crato logging suspended."
+  else
+    echo "Crato does not appear to be logging. Cannot suspend service."
+  fi
+}
+
+resume_logging() {
+  local conf="${CRATO_RSYSLOG_CONF_FILE}"
+
+  if [ -f "${conf}.suspended" ]; then
+    mv "${conf}.suspended" "${conf}"
+    restart_rsyslog
+    echo "Crato logging resumed."
+  else
+    echo "Crato is not suspended. Cannot resume service."
+  fi
+}
+
+restart_rsyslog() {
+  rsyslogd -N1
+
+  if [ $? -eq 0 ]; then
+    service rsyslog restart
+  else
+    echo "Configuration error. Please see above message."
+  fi 
 }
 
 crato_help() {
@@ -58,37 +88,44 @@ and most commands require 'sudo' privileges.
 Valid options:
   sudo crato-client [-c | --configure]
   sudo crato-client [-s | --suspend]
-  sudo crato-client [-r | --remove]
+  sudo crato-client [-r | --resume]
+  sudo crato-client [-d | --delete]
        crato-client [-h | --help]
 
 MSG
 }
 
-if [ -z $1 ]; then
-  crato_help
-  exit
-fi
-
-case $1 in 
-  -c | --configure)
-    echo "Configuring Crato ..."
-     configure
-     ;;
-  -s | --suspend)   # suspends crato's activities without deleting configs
-    echo "Suspending Crato's logging operations ..."
-    suspend_logging
-    ;;
-  -r | --remove)    # removes crato configs; option to remove crato
-    echo "Removing Crato ..."
-    # remove
-    ;;
-  *)
+main() {
+  if [ -z $1 ]; then
     crato_help
     exit
-    ;;
-esac
+  fi
 
+  case $1 in 
+    -c | --configure)
+      echo "Configuring Crato ..."
+       configure
+       ;;
+    -s | --suspend)   # suspends crato's activities without deleting configs
+      echo "Suspending Crato's logging operations ..."
+      suspend_logging
+      ;;
+    -r | --resume)
+      echo "Resuming Crato's logging ..."
+      resume_logging
+      ;;
+    -d | --delete)    # removes crato configs; option to remove crato
+      echo "Deleting Crato ..."
+      # delete_crato
+      ;;
+    *)
+      crato_help
+      exit
+      ;;
+  esac
+}
 
+main "$@"
 
 # CONFIRM SYSTEM & USER PREREQS:
 

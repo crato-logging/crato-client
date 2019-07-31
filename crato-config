@@ -8,13 +8,13 @@
 # SOURCES: which logs do you want Crato to capture?
 
 # source 1
-readonly LOG_1_PATH="/home/app/log/myapp.log"
-readonly LOG_1_TAG="app-message:"
+readonly LOG_1_PATH="/var/log/boot.log"
+readonly LOG_1_TAG="boot-message:"
 readonly LOG_1_SEVERITY="info"
 
 # source 2
-readonly LOG_2_PATH="/tmp/nginx.access.log"
-readonly LOG_2_TAG="nginx-access"
+readonly LOG_2_PATH="/var/log/apache2/access.log"
+readonly LOG_2_TAG="apache-access"
 readonly LOG_2_SEVERITY="info"
 
 # DESTINATIONS: how should this client deliver the logs to Crato's central server
