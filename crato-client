@@ -69,6 +69,17 @@ resume_logging() {
   fi
 }
 
+delete_crato() {
+  # TODO: add option to remove this script as well
+  local conf="${CRATO_RSYSLOG_CONF_FILE}"
+
+  [ -f "${conf}.suspended" ] && rm "${conf}.suspended"
+  [ -f "${conf}" ] && rm "${conf}"
+
+  restart_rsyslog
+  echo "Crato configurations removed."
+}
+
 restart_rsyslog() {
   rsyslogd -N1
 
@@ -116,7 +127,7 @@ main() {
       ;;
     -d | --delete)    # removes crato configs; option to remove crato
       echo "Deleting Crato ..."
-      # delete_crato
+      delete_crato
       ;;
     *)
       crato_help
