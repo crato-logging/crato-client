@@ -4,22 +4,14 @@ readonly RSYSLOG_CONF_DIR="/etc/rsyslog.d"
 readonly CRATO_RSYSLOG_CONF_FILE="${RSYSLOG_CONF_DIR}/49-crato.conf"
 
 configure() {
-  if [ -f crato-config ]; then
-    source crato-config
-  else
-    echo "Unable to locate configuration file."
-    echo "Please confirm your configurations are in 'crato-config'."
-    exit
-  fi
+  confirm_prereqs_for_use
 
   # TODO: check for missing values; prompt for each; type <enter> to continue or <ctl - c> to reconfigure
 
-  if [ -z $LAN_IP_PORT ]; then
-    echo "missing port number"
-  fi
-
   # TODO: dynamically generate imfile blocks based on number of sources
   #       change data structure to do this?
+
+  [ -d ${RSYSLOG_CONF_DIR} ] || mkdir ${RSYSLOG_CONF_DIR}
 
   cat > "${CRATO_RSYSLOG_CONF_FILE}" << CONF
 # CRATO CLIENT CONFIGURATION
@@ -43,6 +35,26 @@ input(type="imfile" File="${LOG_2_PATH}"
 queue.type="linkedList" queue.size="10000")
 
 CONF
+
+restart_rsyslog
+echo "Crato is now logging."
+}
+
+confirm_prereqs_for_use() {
+  if [ -f crato-config ]; then
+    source crato-config
+  else
+    echo "Unable to locate configuration file."
+    echo "Please confirm your configurations are in 'crato-config'."
+    exit 1
+  fi
+#  check compatibility of target system:
+#     os & version of linux
+#     viable rsyslog installed & running as service
+
+
+#  check user permissions:
+#     user running root
 }
 
 suspend_logging() {
@@ -81,8 +93,9 @@ delete_crato() {
 }
 
 restart_rsyslog() {
+  echo "Validating new configuration."
   rsyslogd -N1
-
+# TODO: check exit status of warning messages
   if [ $? -eq 0 ]; then
     service rsyslog restart
   else
@@ -112,7 +125,7 @@ main() {
     exit
   fi
 
-  case $1 in 
+  case $1 in
     -c | --configure)
       echo "Configuring Crato ..."
        configure
