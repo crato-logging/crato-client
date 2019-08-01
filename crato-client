@@ -100,6 +100,7 @@ restart_rsyslog() {
     service rsyslog restart
   else
     echo "Configuration error. Please see above message."
+    exit 1
   fi 
 }
 
