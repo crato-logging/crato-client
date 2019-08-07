@@ -31,8 +31,9 @@ input(type="imfile" File="${LOG_2_PATH}"
      Facility="local0")
 
 *.* action(type="omfwd" target="${PUBLIC_IP}" port="${PUBLIC_IP_PORT}" protocol="tcp"
-	   action.resumeRetryCount="100"
-queue.type="linkedList" queue.size="10000")
+    action.resumeRetryCount="100"
+    queue.type="linkedList"
+    queue.size="10000")
 
 CONF
 
@@ -41,6 +42,28 @@ echo "Crato is now logging."
 }
 
 confirm_prereqs_for_use() {
+  confirm_user_permissions
+  confirm_rsyslog_version
+  confirm_config_file
+}
+
+confirm_user_permissions() {
+ if [ $EUID -ne 0 ]; then
+   echo "Script must run as root. Try executing command with 'sudo'"
+   exit 1
+ fi
+}
+
+confirm_rsyslog_version() {
+  RSYS_VER=$(rsyslogd -v | head -1 | cut -d ' ' -f 2 | cut -d '.' -f 1)
+
+  if [ $RSYS_VER -lt 8 ]; then
+    echo "Dependency not found. Crato needs rsyslogd v8 or greater."
+    exit 1
+  fi
+}
+
+confirm_config_file() {
   if [ -f crato-config ]; then
     source crato-config
   else
@@ -48,13 +71,6 @@ confirm_prereqs_for_use() {
     echo "Please confirm your configurations are in 'crato-config'."
     exit 1
   fi
-#  check compatibility of target system:
-#     os & version of linux
-#     viable rsyslog installed & running as service
-
-
-#  check user permissions:
-#     user running root
 }
 
 suspend_logging() {
@@ -130,7 +146,7 @@ main() {
       echo "Configuring Crato ..."
        configure
        ;;
-    -s | --suspend)   # suspends crato's activities without deleting configs
+    -s | --suspend)
       echo "Suspending Crato's logging operations ..."
       suspend_logging
       ;;
@@ -138,8 +154,8 @@ main() {
       echo "Resuming Crato's logging ..."
       resume_logging
       ;;
-    -d | --delete)    # removes crato configs; option to remove crato
-      echo "Deleting Crato ..."
+    -d | --delete)
+      echo "Deleting Crato configuration ..."
       delete_crato
       ;;
     *)
@@ -150,60 +166,3 @@ main() {
 }
 
 main "$@"
-
-# CONFIRM SYSTEM & USER PREREQS:
-
-#  compatibility of target system:
-#     os & version of linux
-#     viable rsyslog installed & running as service
-
-#  user permissions:
-#     user running root
-
-
-# IF -c | --config
-
-#     COLLECT / SET CONFIG VARIABLES
-
-
-#     PREP FOR CONFIGURATION: IDENTIFY AND BACKUP EXISTING CONFIGS:
-
-#           if first install
-#            ensure appropriate directorys and a default rsyslog.conf file exist
-#          else
-#            cp rsyslog.d/49-crato.conf rsyslog.d/49-crato.conf.prev.timestamp
-
-
-
-#     CONFIGURE CRATO
-
-#         read in / gather config values
-#         generate rsyslog.d/49-crato.conf file based on variables
-
-
-# ELIF  -s | --suspend
-
-#     STOP CRATO LOGGING
-#       mv rsyslog.d/49-crato.conf rsyslog.d/49-crato.conf.prev.timestamp 
-
-# ELIF -r | --remove
-
-
-#     REMOVE CRATO
-#     if stop logging and remove all of Crato
-#       rm rsyslog.d/49-crato.conf
-#       cd and remove Crato scripts
-#     else 
-#       rm rsyslog.d/49-crato.conf
-
-# ELIF -h | --help
-
-
-
-# RESTART RSYSLOG
-
-#   confirm config validity
-
-
-# restart rsyslog
-
