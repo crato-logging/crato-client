@@ -6,11 +6,6 @@ readonly CRATO_RSYSLOG_CONF_FILE="${RSYSLOG_CONF_DIR}/49-crato.conf"
 configure() {
   confirm_prereqs_for_use
 
-  # TODO: check for missing values; prompt for each; type <enter> to continue or <ctl - c> to reconfigure
-
-  # TODO: dynamically generate imfile blocks based on number of sources
-  #       change data structure to do this?
-
   [ -d ${RSYSLOG_CONF_DIR} ] || mkdir ${RSYSLOG_CONF_DIR}
 
   cat > "${CRATO_RSYSLOG_CONF_FILE}" << CONF
@@ -98,7 +93,6 @@ resume_logging() {
 }
 
 delete_crato() {
-  # TODO: add option to remove this script as well
   local conf="${CRATO_RSYSLOG_CONF_FILE}"
 
   [ -f "${conf}.suspended" ] && rm "${conf}.suspended"
@@ -111,7 +105,6 @@ delete_crato() {
 restart_rsyslog() {
   echo "Validating new configuration."
   rsyslogd -N1
-# TODO: check exit status of warning messages
   if [ $? -eq 0 ]; then
     service rsyslog restart
   else
