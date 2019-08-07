@@ -8,6 +8,8 @@ configure() {
 
   [ -d ${RSYSLOG_CONF_DIR} ] || mkdir ${RSYSLOG_CONF_DIR}
 
+  # TODO: allow indeterminate number of input files
+  # TODO: allow LAN as forwarding target
   cat > "${CRATO_RSYSLOG_CONF_FILE}" << CONF
 # CRATO CLIENT CONFIGURATION
 # use in conjuction with default rsyslog.conf and rsyslog.d/50-default.conf files
