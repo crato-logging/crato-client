@@ -100,21 +100,21 @@ restart_rsyslog() {
     service rsyslog restart
   else
     echo "Configuration error. Please see above message."
+    exit 1
   fi 
 }
 
 crato_help() {
   cat << MSG
 
-Missing or unrecognized option. Crato requires a valid option flag,
-and most commands require 'sudo' privileges.
+Crato requires a valid option flag and most commands require 'sudo' privileges.
 
 Valid options:
-  sudo crato-client [-c | --configure]
-  sudo crato-client [-s | --suspend]
-  sudo crato-client [-r | --resume]
-  sudo crato-client [-d | --delete]
-       crato-client [-h | --help]
+  sudo crato [-c | --configure]
+  sudo crato [-s | --suspend]
+  sudo crato [-r | --resume]
+  sudo crato [-d | --delete]
+       crato [-h | --help]
 
 MSG
 }
