@@ -1,5 +1,6 @@
 #! /bin/bash
 
+readonly RSYSLOG_CONF_FILE="/etc/rsyslog.conf"
 readonly RSYSLOG_CONF_DIR="/etc/rsyslog.d"
 readonly CRATO_RSYSLOG_CONF_FILE="${RSYSLOG_CONF_DIR}/49-crato.conf"
 
@@ -40,6 +41,7 @@ echo "Crato is now logging."
 
 confirm_prereqs_for_use() {
   confirm_user_permissions
+  confirm_config_include_statement
   confirm_rsyslog_version
   confirm_config_file
 }
@@ -49,6 +51,14 @@ confirm_user_permissions() {
    echo "Script must run as root. Try executing command with 'sudo'"
    exit 1
  fi
+}
+
+confirm_config_include_statement() {
+  cat "${RSYSLOG_CONF_FILE}" | grep -q "^\s*\$IncludeConfig ${RSYSLOG_CONF_DIR}/\*.conf"
+
+  if [ $? -ne 0 ]; then
+    echo "\$IncludeConfig ${RSYSLOG_CONF_DIR}/*.conf" >> ${RSYSLOG_CONF_FILE}
+  fi
 }
 
 confirm_rsyslog_version() {
