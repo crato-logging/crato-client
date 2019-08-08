@@ -1,24 +1,19 @@
 #!/bin/bash
 
-# Enter values in double quotes as seen below. on the right side
-# If any values don't apply, replace sample value with double quotes,
-# as seen in LAN_IP and LAN_IP_PORT
+# Crato log input configuration
+# use CSV format
 
 
-# SOURCES: which logs do you want Crato to capture?
+#LOG:path-to-log,tag,severity
+LOG:/hello/there,new-tag,info
 
-# source 1
-readonly LOG_1_PATH="/var/log/boot.log"
-readonly LOG_1_TAG="boot-message:"
-readonly LOG_1_SEVERITY="info"
+LOG:/good/bye,tag-2,warn
 
-# source 2
-readonly LOG_2_PATH="/var/log/apache2/access.log"
-readonly LOG_2_TAG="apache-access"
-readonly LOG_2_SEVERITY="info"
+LOG:/hello/again/you,tag-3,debug
 
-# DESTINATIONS: how should this client deliver the logs to Crato's central server
-readonly PUBLIC_IP="123.12.32.12"
-readonly PUBLIC_IP_PORT="10514"
-readonly LAN_IP=""
-readonly LAN_IP_PORT=""
+PUBLIC_IP:123.123.312.34,514
+
+PUBLIC_IP:223.123.312.34,714
+
+
+
