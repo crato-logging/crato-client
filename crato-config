@@ -1,19 +1,17 @@
 #!/bin/bash
 
-# Crato log input configuration
-# use CSV format
+# Crato configuration
 
+# Enter a new row for each log to track. Commas separate KEY:value pairs
+#LOG:<enter path to log>,         TAG:<enter tag>,   SEVERITY:<enter severity>
+LOG:/var/log/fontconfig.log,      TAG:new-tag,       SEVERITY:info
+LOG:/var/log/boot.log,            TAG:tag-2,         SEVERITY:warn
+LOG:/var/log/gpu-manager.log,     TAG:tag-3,         SEVERITY:debug
 
-#LOG:path-to-log,tag,severity
-LOG:/hello/there,new-tag,info
-
-LOG:/good/bye,tag-2,warn
-
-LOG:/hello/again/you,tag-3,debug
-
-PUBLIC_IP:123.123.312.34,514
-
-PUBLIC_IP:223.123.312.34,714
+# Enter a new row for each destination to foward logs. Commas separate KEY:value pairs
+#PUBLIC_IP:<enter ip_address>,    PORT:<enter port>
+PUBLIC_IP:127.0.0.1,              PORT:514
+PUBLIC_IP:127.0.0.1,              PORT:714
 
 
 

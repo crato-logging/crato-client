@@ -1,18 +1,16 @@
 #! /bin/bash
 
-readonly USER_SETTINGS="crato-config"
-readonly RSYSLOG_CONF_FILE="/etc/rsyslog.conf"
-readonly RSYSLOG_CONF_DIR="/etc/rsyslog.d"
-readonly CRATO_RSYSLOG_CONF_FILE="${RSYSLOG_CONF_DIR}/49-crato.conf"
+readonly RSYSLOG_CONFIG_FILE="/etc/rsyslog.conf"
+readonly RSYSLOG_CONFIG_DIR="/etc/rsyslog.d"
+readonly CRATO_CONFIG_FILE="${RSYSLOG_CONFIG_DIR}/49-crato.conf"
+readonly CRATO_USER_SETTINGS="crato-config"
 
 configure() {
   confirm_prereqs_for_use
 
-  [ -d ${RSYSLOG_CONF_DIR} ] || mkdir ${RSYSLOG_CONF_DIR}
-
   # TODO: allow LAN as forwarding target
 
-  cat > "${CRATO_RSYSLOG_CONF_FILE}" << CONF
+  cat > "${CRATO_CONFIG_FILE}" << CONF
 # CRATO CLIENT CONFIGURATION
 # use in conjuction with default rsyslog.conf and rsyslog.d/50-default.conf files
 
@@ -23,13 +21,13 @@ CONF
   IFS_OLD=$IFS
   IFS=$'\n'
 
-  for input in $(cat "${USER_SETTINGS}"); do
+  for input in $(cat "${CRATO_USER_SETTINGS}"); do
     if [[ $input == LOG* ]]; then
       path=$(echo $input | cut -d ',' -f 1 | cut -d ':' -f 2)
-      tag=$(echo $input | cut -d ',' -f 2)
-      severity=$(echo $input | cut -d ',' -f 3)
+      tag=$(echo $input | cut -d ',' -f 2 | cut -d ':' -f 2)
+      severity=$(echo $input | cut -d ',' -f 3 | cut -d ':' -f 2)
 
-      cat >> "${CRATO_RSYSLOG_CONF_FILE}" << INPUT
+      cat >> "${CRATO_CONFIG_FILE}" << INPUT
 input(type="imfile" File="${path}"
      Tag="${tag}"
      Severity="${severity}"
@@ -40,9 +38,9 @@ INPUT
 
     elif [[ $input == PUBLIC* ]]; then
       public_ip=$(echo $input | cut -d ',' -f 1 | cut -d ':' -f 2)
-      public_port=$(echo $input | cut -d ',' -f 2)
+      public_port=$(echo $input | cut -d ',' -f 2 | cut -d ':' -f 2)
 
-    cat >> "${CRATO_RSYSLOG_CONF_FILE}" << OUTPUT
+    cat >> "${CRATO_CONFIG_FILE}" << OUTPUT
 *.* action(type="omfwd" target="${public_ip}" port="${public_port}" protocol="tcp"
     action.resumeRetryCount="100"
     queue.type="linkedList"
@@ -51,9 +49,8 @@ INPUT
 OUTPUT
     fi
   done
+
   IFS=$IFS_OLD
-
-
   restart_rsyslog
   echo "Crato is now logging."
 }
@@ -82,15 +79,17 @@ confirm_rsyslog_version() {
 }
 
 confirm_config_include_statement() {
-  cat "${RSYSLOG_CONF_FILE}" | grep -q "^\s*\$IncludeConfig ${RSYSLOG_CONF_DIR}/\*.conf"
+  [ -d ${RSYSLOG_CONFIG_DIR} ] || mkdir ${RSYSLOG_CONFIG_DIR}
+
+  cat "${RSYSLOG_CONFIG_FILE}" | grep -q "^\s*\$IncludeConfig ${RSYSLOG_CONFIG_DIR}/\*.conf"
 
   if [ $? -ne 0 ]; then
-    echo "\$IncludeConfig ${RSYSLOG_CONF_DIR}/*.conf" >> ${RSYSLOG_CONF_FILE}
+    echo "\$IncludeConfig ${RSYSLOG_CONFIG_DIR}/*.conf" >> ${RSYSLOG_CONFIG_FILE}
   fi
 }
 
 confirm_config_file() {
-  if [ ! -s $USER_SETTINGS ]; then
+  if [ ! -s $CRATO_USER_SETTINGS ]; then
     echo "Unable to locate configuration file."
     echo "Please confirm your configurations are in 'crato-config'."
     exit 1
@@ -98,7 +97,7 @@ confirm_config_file() {
 }
 
 suspend_logging() {
-  local conf="${CRATO_RSYSLOG_CONF_FILE}"
+  local conf="${CRATO_CONFIG_FILE}"
 
   if [ -f "$conf" ]; then
     mv "${conf}" "${conf}.suspended"
@@ -110,7 +109,7 @@ suspend_logging() {
 }
 
 resume_logging() {
-  local conf="${CRATO_RSYSLOG_CONF_FILE}"
+  local conf="${CRATO_CONFIG_FILE}"
 
   if [ -f "${conf}.suspended" ]; then
     mv "${conf}.suspended" "${conf}"
@@ -122,7 +121,7 @@ resume_logging() {
 }
 
 delete_crato() {
-  local conf="${CRATO_RSYSLOG_CONF_FILE}"
+  local conf="${CRATO_CONFIG_FILE}"
 
   [ -f "${conf}.suspended" ] && rm "${conf}.suspended"
   [ -f "${conf}" ] && rm "${conf}"
