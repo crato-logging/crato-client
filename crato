@@ -44,10 +44,10 @@ INPUT
     queue.type="linkedList"
     queue.size="10000"
     queue.filename="DAQueue${public_ip}${public_port}"
-    queue.maxFileSize="16"
+    queue.maxFileSize="1g"
     queue.saveOnShutdown="on"
-    queue.fullDelaymark="98"
-    queue.discardMark="95"
+    queue.fullDelaymark="9800"
+    queue.discardMark="9500"
     queue.discardSeverity="5")
 
 
