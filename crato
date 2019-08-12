@@ -8,8 +8,6 @@ readonly CRATO_USER_SETTINGS="crato-config"
 configure() {
   confirm_prereqs_for_use
 
-  # TODO: allow LAN as forwarding target
-
   cat > "${CRATO_CONFIG_FILE}" << CONF
 # CRATO CLIENT CONFIGURATION
 # use in conjuction with default rsyslog.conf and rsyslog.d/50-default.conf files
@@ -44,7 +42,14 @@ INPUT
 *.* action(type="omfwd" target="${public_ip}" port="${public_port}" protocol="tcp"
     action.resumeRetryCount="100"
     queue.type="linkedList"
-    queue.size="10000")
+    queue.size="10000"
+    queue.filename="DAQueue${public_ip}${public_port}"
+    queue.maxFileSize="16"
+    queue.saveOnShutdown="on"
+    queue.fullDelaymark="98"
+    queue.discardMark="95"
+    queue.discardSeverity="5")
+
 
 OUTPUT
     fi
