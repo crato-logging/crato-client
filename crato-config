@@ -8,10 +8,10 @@ LOG:/var/log/fontconfig.log,      TAG:new-tag,       SEVERITY:info
 LOG:/var/log/boot.log,            TAG:tag-2,         SEVERITY:warn
 LOG:/var/log/gpu-manager.log,     TAG:tag-3,         SEVERITY:debug
 
-# Enter a new row for each destination to foward logs. Commas separate KEY:value pairs
-#PUBLIC_IP:<enter ip_address>,    PORT:<enter port>
-PUBLIC_IP:127.0.0.1,              PORT:514
-PUBLIC_IP:127.0.0.1,              PORT:714
+# Enter a new row for each destination to foward logs.
+#PUBLIC_IP:<enter ip_address>
+PUBLIC_IP:127.0.0.1
+PUBLIC_IP:127.0.0.1
 
 
 

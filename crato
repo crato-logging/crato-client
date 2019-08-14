@@ -36,14 +36,13 @@ INPUT
 
     elif [[ $input == PUBLIC* ]]; then
       public_ip=$(echo $input | cut -d ',' -f 1 | cut -d ':' -f 2)
-      public_port=$(echo $input | cut -d ',' -f 2 | cut -d ':' -f 2)
 
     cat >> "${CRATO_CONFIG_FILE}" << OUTPUT
-*.* action(type="omfwd" target="${public_ip}" port="${public_port}" protocol="tcp"
+*.* action(type="omfwd" target="${public_ip}" port="514" protocol="tcp"
     action.resumeRetryCount="100"
     queue.type="linkedList"
     queue.size="10000"
-    queue.filename="DAQueue${public_ip}${public_port}"
+    queue.filename="DAQueue${public_ip}"
     queue.maxFileSize="1g"
     queue.saveOnShutdown="on"
     queue.fullDelaymark="9800"
