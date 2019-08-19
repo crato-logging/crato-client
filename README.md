@@ -8,12 +8,6 @@ Crato is an open source framework for small applications to easily deploy centra
 
 ### 🏠 [Homepage](http://bit.ly/2TJckpZ)
 
-## Table of Contents
-- [Crato Client Usage](#crato-client-usage)
-- [Dependencies](#dependencies)
-- [Install](#install)
-- [Support](#show-your-support)
-
 ## Crato Client Usage
 
 All commands (except `-h`) assume `sudo` privileges.
