@@ -6,7 +6,7 @@
 ![version](https://img.shields.io/badge/version-0.7.0-1e4470?style=plastic) 
 ![license](https://img.shields.io/github/license/crato-logging/crato?color=1e4470&style=plastic)
 
-Crato is an open source framework for small applications to easily deploy centralized logging. Crato is built with Node.JS, Rsyslog, Apache Kafka, InfluxDB, AWS S3 and Bash. This repo contains the Crato client, a tool that configures `rsyslog` to collect system and application logs and send them via TCP to the Crato core infrastructure.
+Crato is an open source framework for small applications to easily deploy centralized logging. Crato is built with Node.js, Rsyslog, Apache Kafka, InfluxDB, AWS S3 and Bash. This repo contains the Crato client, a tool that configures `rsyslog` to collect system and application logs and send them via TCP to the Crato core infrastructure.
 
 ### 🏠 [Homepage](http://bit.ly/2TJckpZ)
 
