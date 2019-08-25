@@ -31,7 +31,7 @@ By default, Crato client sends messages to its central server via tcp over port 
 
 ## Install
 
-To install Crato, clone [this](https://github.com/crato-logging/crato-client) repo.
+To install Crato Client, clone [this](https://github.com/crato-logging/crato-client) repo.
 
 Crato client configuration options are set in `crato-config`. Using key-value pairs, enter any number of logs for Crato to track, along with their tags and severity levels. Then enter the ip address of the central server.
 
